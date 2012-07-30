@@ -1,4 +1,5 @@
 dew
-*.c
-*.h
+dew_lexer.c
+dew_parser.c
+dew_parser.h
 *.o

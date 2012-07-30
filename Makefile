@@ -3,12 +3,14 @@ LEX=flex
 YACC=bison
 CFLAGS=-Os -W -Wall -Wextra -Werror
 
+OBJECTS=dew_parser.o dew_lexer.o dew_main.o
+
 all: dew
 
 dew_lexer.c: dew.l
 	$(LEX) -o $@ $^
 
-dew: dew_parser.o dew_lexer.o
+dew: $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 dew_parser.c: dew.y
@@ -16,4 +18,4 @@ dew_parser.c: dew.y
 
 .PHONY: clean
 clean:
-	rm -f dew_parser.o dew_parser.c dew_parser.h dew_lexer.o dew_lexer.c dew
+	rm -f $(OBJECTS) dew_parser.c dew_parser.h dew_lexer.c dew
