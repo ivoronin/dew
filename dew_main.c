@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
 #include "dew.h"
 
 void sfree(void *p) {
@@ -23,9 +25,33 @@ void * smalloc(size_t size) {
 unsigned int hexc2int(char c) {
 	int i = -1;
 	if (c >= '0' && c <= '9') i = c - '0';
- 	if (c >= 'A' && c <= 'F') i = 10 + c - 'A';
- 	/* if (c >= 'a' && c <= 'f') i = 10 + c - 'a'; */
- 	return i;
+	if (c >= 'A' && c <= 'F') i = 10 + c - 'A';
+	/* if (c >= 'a' && c <= 'f') i = 10 + c - 'a'; */
+	return i;
+}
+
+char * decode_b64(char *s) {
+	int l;
+	BIO *b64, *bio;
+	char *r;
+
+	if (s == NULL)
+		return NULL;
+
+	l = strlen(s);
+
+	if ( (b64 = BIO_new(BIO_f_base64())) == NULL )
+		return NULL;
+	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	bio = BIO_new_mem_buf(s, l);
+	bio = BIO_push(b64, bio);
+
+	r = (char*)smalloc(l);
+	BIO_read(bio, r, l);
+
+	BIO_free_all(bio);
+
+	return r;
 }
 
 char * decode_qp(char *s) {
@@ -94,23 +120,22 @@ char * convert(char * charset, char *s) {
 }
 
 void handle_qw(char *charset, char *encoding, char *s) {
-	char *d, *c;
+	char *d = NULL, *c;
 
 	if ( !charset || !encoding || !s )
 		return;
 
-	if ( !strcmp(encoding, "Q") ) {
-		if ( (d = decode_qp(s)) == NULL )
-			d = strdup(s);
-	} else if ( !strcmp(encoding, "B") )
-		/* base64 - not implemented */
-		d = strdup(s);
-	else
+	if ( !strcmp(encoding, "Q") )
+		d = decode_qp(s);
+	else if ( !strcmp(encoding, "B") )
+		d = decode_b64(s);
+
+	if ( d == NULL )
 		d = strdup(s);
 
 	c = convert(charset, d);
 	printf("%s", c);
-	
+
 	sfree(d);
 	sfree(c);
 }

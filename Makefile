@@ -2,6 +2,7 @@ CC=gcc
 LEX=flex
 YACC=bison
 CFLAGS=-Os -W -Wall -Wextra -Werror
+LDFLAGS=-lcrypto
 
 OBJECTS=dew_parser.o dew_lexer.o dew_main.o
 
@@ -11,7 +12,7 @@ dew_lexer.c: dew.l
 	$(LEX) -o $@ $^
 
 dew: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 dew_parser.c: dew.y
 	$(YACC) -d -o $@ $^

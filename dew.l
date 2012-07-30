@@ -9,14 +9,14 @@ int q = 0;
 
 %x EW_CHARSET EW_ENCODING EW_TEXT
 
-%% 
+%%
 
 <INITIAL>"=?" {
 	BEGIN EW_CHARSET;
 	return EW_START;
 }
 
-<EW_CHARSET,EW_ENCODING>"?" { 
+<EW_CHARSET,EW_ENCODING>"?" {
 	if ( ++q == 1 )
 		BEGIN EW_ENCODING;
 	else if ( q == 2 )
@@ -27,21 +27,21 @@ int q = 0;
 
 %{ /*
 	Any CHAR except SPACE, CTLs, and especials>
-  	especials = "(" / ")" / "<" / ">" / "@" / "," / ";" / ":" / "
-                <"> / "/" / "[" / "]" / "?" / "." / "="
+	especials = "(" / ")" / "<" / ">" / "@" / "," / ";" / ":" / "
+	            <"> / "/" / "[" / "]" / "?" / "." / "="
 
-    \x21      !
-    \x23-\x27 # $ % & ´
-    \x2a-\x2b * +
-    \x2d      -
-    \x30-\x39 0-9
-    \x41-\x5a A-Z
-    \x5c      \
-    \x5e-\x7e ^ _ ` a-z { | } ~  
+	\x21      !
+	\x23-\x27 # $ % & ´
+	\x2a-\x2b * +
+	\x2d      -
+	\x30-\x39 0-9
+	\x41-\x5a A-Z
+	\x5c      \
+	\x5e-\x7e ^ _ ` a-z { | } ~
 */ %}
-<EW_CHARSET,EW_ENCODING>[\x21\x23-\x27\x2a-\x2b\x2d\x30-\x39\x41-\x5a\x5c\x5e-\x7e]+ { 
+<EW_CHARSET,EW_ENCODING>[\x21\x23-\x27\x2a-\x2b\x2d\x30-\x39\x41-\x5a\x5c\x5e-\x7e]+ {
 	yylval.string = strdup(yytext);
-	return TOKEN; 
+	return TOKEN;
 }
 
 %{ /* Any printable ASCII character other than "?" or SPACE */ %}
