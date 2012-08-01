@@ -1,7 +1,7 @@
 CC=gcc
 LEX=flex
 YACC=bison
-CFLAGS=-Os -W -Wall -Wextra -Werror
+CFLAGS=-Os -W -Wall -Wextra
 LDFLAGS=-lcrypto
 
 OBJECTS=dew_parser.o dew_lexer.o dew_main.o
