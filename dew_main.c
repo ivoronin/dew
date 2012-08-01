@@ -125,9 +125,9 @@ void handle_qw(char *charset, char *encoding, char *s) {
 	if ( !charset || !encoding || !s )
 		return;
 
-	if ( !strcmp(encoding, "Q") )
+	if ( !strcasecmp(encoding, "Q") )
 		d = decode_qp(s);
-	else if ( !strcmp(encoding, "B") )
+	else if ( !strcasecmp(encoding, "B") )
 		d = decode_b64(s);
 
 	if ( d == NULL )
